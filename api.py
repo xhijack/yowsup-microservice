@@ -2,6 +2,8 @@ from flask import Flask, request
 from flasgger import Swagger
 from nameko.standalone.rpc import ClusterRpcProxy
 from flasgger.utils import swag_from
+from flask import request
+
 import logging
 import os
 
@@ -15,6 +17,8 @@ CONFIG = {'AMQP_URI': "amqp://ntjuoyrh:S5mrn6IUnwfzrUaqvPsJ-K60FA9CuFog@skunk.rm
 @app.route('/send', methods=['POST'])
 @swag_from('docs/send.yml')
 def send():
+    ip_number = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    print(ip_number)
     logger = app.logger
     type = request.json.get('type')
     body = request.json.get('body')
