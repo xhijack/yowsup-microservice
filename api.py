@@ -1,9 +1,10 @@
+from datetime import datetime
 from flask import Flask, request
 from flasgger import Swagger
 from nameko.standalone.rpc import ClusterRpcProxy
 from flasgger.utils import swag_from
 from flask import request
-
+from pymongo import MongoClient
 import logging
 import os
 
@@ -13,17 +14,28 @@ Swagger(app)
 # CONFIG = {'AMQP_URI': "pyamqp://guest:guest@localhost"}
 CONFIG = {'AMQP_URI': "amqp://ntjuoyrh:S5mrn6IUnwfzrUaqvPsJ-K60FA9CuFog@skunk.rmq.cloudamqp.com/ntjuoyrh"}
 
+client = MongoClient('mongodb://wa_ramdani:wa_ramdani@ds121999.mlab.com:21999/whatsapp-messages')
+
+db = client['whatsapp-messages']
 
 @app.route('/send', methods=['POST'])
 @swag_from('docs/send.yml')
 def send():
     ip_number = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
     print(ip_number)
+
     logger = app.logger
     type = request.json.get('type')
     body = request.json.get('body')
     address = request.json.get('address')
     logger.info('Get message: %s,%s,%s' % (type, body, address))
+
+    db.messages.insert_one({
+        'toNumber': address,
+        'message': body,
+        'ip': ip_number,
+        'created': datetime.now()
+    })
 
     with ClusterRpcProxy(CONFIG) as rpc:
         # asynchronously spawning and email notification
