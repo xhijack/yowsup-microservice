@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask import Flask, request
 from flasgger import Swagger
+from flask_cors import CORS
 from nameko.standalone.rpc import ClusterRpcProxy
 from flasgger.utils import swag_from
 from flask import request
@@ -11,6 +12,7 @@ import os
 from whitelist import ips
 
 app = Flask(__name__)
+CORS(app)
 Swagger(app)
 
 # CONFIG = {'AMQP_URI': "pyamqp://guest:guest@localhost"}
