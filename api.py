@@ -27,28 +27,28 @@ db = client['whatsapp-messages']
 def send():
     ip_number = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
 
-    if ip_number in ips:
-        logger = app.logger
-        type = request.json.get('type')
-        body = request.json.get('body')
-        address = request.json.get('address')
-        logger.info('Get message: %s,%s,%s' % (type, body, address))
+    # if ip_number in ips:
+    logger = app.logger
+    type = request.json.get('type')
+    body = request.json.get('body')
+    address = request.json.get('address')
+    logger.info('Get message: %s,%s,%s' % (type, body, address))
 
-        db.messages.insert_one({
-            'toNumber': address,
-            'message': body,
-            'ip': ip_number,
-            'created': datetime.now()
-        })
+    db.messages.insert_one({
+        'toNumber': address,
+        'message': body,
+        'ip': ip_number,
+        'created': datetime.now()
+    })
 
-        with ClusterRpcProxy(CONFIG) as rpc:
-            # asynchronously spawning and email notification
-            rpc.yowsup.send(type, body, address)
+    with ClusterRpcProxy(CONFIG) as rpc:
+        # asynchronously spawning and email notification
+        rpc.yowsup.send(type, body, address)
 
-        msg = "The message was sucessfully sended to the queue"
-        return msg, 200
-    else:
-        return "Silakan hanya menggunakan halaman resmi kami", 401
+    msg = "The message was sucessfully sended to the queue"
+    return msg, 200
+    # else:
+    #     return "Silakan hanya menggunakan halaman resmi kami", 401
 
 
 if __name__ == "__main__":
