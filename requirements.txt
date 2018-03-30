@@ -4,3 +4,5 @@ flasgger
 git+https://github.com/tgalal/yowsup@master
 pexpect
 gunicorn==19.7.1
+pymongo
+flask_cors
