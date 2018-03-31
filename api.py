@@ -23,57 +23,30 @@ client = MongoClient('mongodb://wa_ramdani:wa_ramdani@ds121999.mlab.com:21999/wh
 db = client['whatsapp-messages']
 
 
-
-@app.before_request
-def option_autoreply():
-    """ Always reply 200 on OPTIONS request """
-
-    if request.method == 'OPTIONS':
-        print("rock it");
-        resp = app.make_default_options_response()
-
-        headers = None
-        if 'ACCESS_CONTROL_REQUEST_HEADERS' in request.headers:
-            headers = request.headers['ACCESS_CONTROL_REQUEST_HEADERS']
-
-        h = resp.headers
-
-        # Allow the origin which made the XHR
-        h['Access-Control-Allow-Origin'] = request.headers['Origin']
-        # Allow the actual method
-        h['Access-Control-Allow-Methods'] = request.headers['Access-Control-Request-Method']
-        # Allow for 10 seconds
-        h['Access-Control-Max-Age'] = "10"
-
-        # We also keep current headers
-        if headers is not None:
-            h['Access-Control-Allow-Headers'] = headers
-
-        return resp
-
-
 @app.route('/send', methods=['POST'])
 @swag_from('docs/send.yml')
 def send():
-    ip_number = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
 
+    ip_number = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
     # if ip_number in ips:
     logger = app.logger
     type = request.json.get('type')
     body = request.json.get('body')
     address = request.json.get('address')
-    logger.info('Get message: %s,%s,%s' % (type, body, address))
 
-    db.messages.insert_one({
-        'toNumber': address,
-        'message': body,
-        'ip': ip_number,
-        'created': datetime.now()
-    })
+    if not db.messages.find_one({'toNumber': address, 'message': body}):
+        logger.info('Get message: %s,%s,%s' % (type, body, address))
 
-    with ClusterRpcProxy(CONFIG) as rpc:
-        # asynchronously spawning and email notification
-        rpc.yowsup.send(type, body, address)
+        db.messages.insert_one({
+            'toNumber': address,
+            'message': body,
+            'ip': ip_number,
+            'created': datetime.now()
+        })
+
+        with ClusterRpcProxy(CONFIG) as rpc:
+            # asynchronously spawning and email notification
+            rpc.yowsup.send(type, body, address)
 
     msg = "The message was sucessfully sended to the queue"
     return msg, 200

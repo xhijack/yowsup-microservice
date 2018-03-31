@@ -1,0 +1,12 @@
+
+INFO:yowsup.common.http.warequest:b'{"status":"ok","login":"6287834423879","type":"existing","edge_routing_info":"CAA=","chat_dns_domain":"sl","pw":"zU7Ma/QMlOTRwo5IDTYMKtLmJKk=","expiration":4444444444.0,"kind":"free","price":"$0.99","cost":"0.99","currency":"USD","price_expiration":1522069084}\n'
+status: b'ok'
+login: b'6287834423879'
+pw: b'zU7Ma/QMlOTRwo5IDTYMKtLmJKk='
+type: b'existing'
+expiration: 4444444444.0
+kind: b'free'
+price: b'$0.99'
+cost: b'0.99'
+currency: b'USD'
+price_expiration: 1522069084
