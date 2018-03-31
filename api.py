@@ -33,8 +33,9 @@ def send():
     type = request.json.get('type')
     body = request.json.get('body')
     address = request.json.get('address')
-
-    if not db.messages.find_one({'toNumber': address, 'message': body}):
+    res = db.messages.find_one({'toNumber': address, 'message': body})
+    print("res:", res)
+    if not res:
         logger.info('Get message: %s,%s,%s' % (type, body, address))
 
         db.messages.insert_one({
