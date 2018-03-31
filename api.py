@@ -36,7 +36,7 @@ def send():
     res = db.messages.find_one({'toNumber': address, 'message': body})
     print("res:", res)
     if not res:
-        logger.info('Get message: %s,%s,%s' % (type, body, address))
+        logger.info('Get message: %s,%s,%s: %s' % (type, body, address, res))
 
         db.messages.insert_one({
             'toNumber': address,
