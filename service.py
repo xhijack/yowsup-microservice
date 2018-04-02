@@ -12,10 +12,10 @@ class yowsup(object):
 
     @rpc
     def send(self, type, body, address):
-        logging.info('Get message: %s,%s,%s' % (type, body, address))
+        logging.info('RM Kirim: %s,%s,%s' % (type, body, address))
         output = self.y.sendTextMessage(address, body)
 
-
+        print("Output:", output)
         return True
         #pprint(self)
         #logging.info(self.y)
