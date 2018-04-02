@@ -14,7 +14,7 @@ class yowsup(object):
     def send(self, type, body, address):
         logging.info('RM Kirim: %s,%s,%s' % (type, body, address))
         output = self.y.sendTextMessage(address, body)
-        logging.info('Output: %s,%s,%s' % (output))
+        logging.info('Output: %s' % (output))
         return True
         #pprint(self)
         #logging.info(self.y)
