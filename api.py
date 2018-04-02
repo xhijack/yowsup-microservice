@@ -37,7 +37,6 @@ def send():
     print("res:", res)
     if not res:
         logger.info('Get message: %s,%s,%s: %s' % (type, body, address, res))
-git
         db.messages.insert_one({
             'toNumber': address,
             'message': body,
